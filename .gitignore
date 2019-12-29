@@ -1,0 +1,20 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea
+docker/dbdata/
+docker/repository/
+src/**/__pycache__/
+src/settings_local.py
+frontend/dist
+.DS_Store
+/frontend/node_modules/
+/src/logs/
+/src/data.json
+/docker/esdata/
+/docker/cms_dbdata/
+/frontend_cms/node_modules/
+/frontend/package-lock.json
+/frontend_cms/package-lock.json
+/celery/logs/
+celery/**/__pycache__/
+/src/test.log
+/src/output.json
