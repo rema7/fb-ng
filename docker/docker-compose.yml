@@ -19,7 +19,10 @@ services:
   fbng_backend:
     container_name: fbng_backend
     environment:
-      DB_CONNECTION: postgresql+psycopg2://db_user:db_pwd@fbng_db/fbng_db
+      DB_NAME: 'fbng_db'
+      DB_USER: 'db_user'
+      DB_PASSWORD: 'db_pwd'
+      DB_HOST: 'fbng_db'
       WAIT_HOSTS: fbng_db:3306
       WAIT_HOSTS_TIMEOUT: 600
     build: backend
