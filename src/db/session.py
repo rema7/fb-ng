@@ -12,14 +12,14 @@ connection = pymysql.connect(
     cursorclass=pymysql.cursors.DictCursor
 )
 
+
 @contextmanager
 def open_db_session():
-    cursor = connection.cursor()
     try:
-        yield cursor
+        yield connection
     except:
-        cursor.rollback()
+        connection.rollback()
         raise
 
-    cursor.close()
+    connection.close()
 

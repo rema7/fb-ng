@@ -6,9 +6,9 @@ from db.session import open_db_session
 def with_db_session(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
-        if kwargs.get('db_session') is None:
-            with open_db_session() as db_session:
-                kwargs['db_session'] = db_session
+        if kwargs.get('cursor') is None:
+            with open_db_session() as connection:
+                kwargs['connection'] = connection
                 return fn(*args, **kwargs)
 
         return fn(*args, **kwargs)

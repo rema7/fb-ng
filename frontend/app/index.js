@@ -9,10 +9,8 @@ import App from './App.vue'
 
 import { getToken, removeToken } from 'helpers/storage'
 
-import '@mdi/font/css/materialdesignicons.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import 'vuetify/dist/vuetify.min.css'
-import 'filters'
 
 axios.interceptors.response.use((response) => {
     return response
@@ -40,7 +38,6 @@ const initVue = () => {
     new Vue({
         vuetify: new Vuetify(opts),
         el: '#app',
-        i18n,
         store,
         router,
         render: (h) => h(App),

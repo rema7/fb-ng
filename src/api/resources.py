@@ -1,18 +1,26 @@
-from api.helpers import is_email_valid
-from db.decorators import with_db_session
+import settings as app_settings
+from api.decorators import validate_auth
 
 
-class LoginResource:
+@validate_auth
+class AccountResource:
+    def on_get(self, req, resp):
+        # body = req.context['body']
+
+        resp.body = {}
+
+
+class SettingsResource:
     @staticmethod
-    @with_db_session
-    def handle_post(email, password, db_session=None):
-        is_email_valid(email)
-        return
-
-    def on_post(self, req, resp):
-        body = req.context['body']
-
-        resp.body = self.handle_post(
-            email=body['email'],
-            password=body['password']
-        )
+    def on_get(_, resp):
+        frontend_urls_prefix = 'FURL_'
+        business_logic_keys = ()
+        resp.body = {
+            key: getattr(app_settings, key.upper()) for key in business_logic_keys
+        }
+        resp.body.update({
+            'urls': {
+                key[len(frontend_urls_prefix):].lower(): getattr(app_settings, key.upper())
+                for key in dir(app_settings) if key.startswith(frontend_urls_prefix)
+            }
+        })

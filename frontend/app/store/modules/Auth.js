@@ -35,6 +35,23 @@ const actions = {
             commit(AUTH_ERROR, e)
         }
     },
+    async register ({ state, commit, rootState }, user) {
+        if (state.loading) {
+            return
+        }
+
+        commit(AUTH_REQUEST)
+        try {
+            const result = await post(
+                rootState.settings.urls.register,
+                user,
+            )
+            commit(AUTH_SUCCESS, result)
+            return result
+        } catch (e) {
+            commit(AUTH_ERROR, e)
+        }
+    },
     async logout ({ state, commit }) {
         commit(AUTH_LOGOUT)
     },
