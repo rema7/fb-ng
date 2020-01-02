@@ -35,9 +35,8 @@ class LoginResource:
             raise falcon.HTTPNotFound(
                 description='Wrong email or password'
             )
-        token = generate_token(uuid, email)
         return {
-            'token': token
+            'token': generate_token(uuid, email)
         }
 
     @validate_request(auth_request_schema)
@@ -76,7 +75,9 @@ class RegisterResource:
                 name, last_name, age, sex, country
             ))
         connection.commit()
-        return generate_token(uuid, email)
+        return {
+            'token': generate_token(uuid, email)
+        }
 
     @validate_request(register_request_schema)
     def on_post(self, req, resp):

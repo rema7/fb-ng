@@ -1,13 +1,15 @@
+import falcon
+
 import settings as app_settings
 from api.decorators import validate_auth
 
 
-@validate_auth
+@falcon.before(validate_auth)
 class AccountResource:
     def on_get(self, req, resp):
-        # body = req.context['body']
+        account = req.context['account']
 
-        resp.body = {}
+        resp.body = account
 
 
 class SettingsResource:

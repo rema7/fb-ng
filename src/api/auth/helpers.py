@@ -26,7 +26,7 @@ def verify_password(password, password_hash):
 
 
 def generate_token(uuid, email):
-    expire_at = datetime.utcnow() + timedelta(app_settings.JWT_EXP_SECONDS)
+    expire_at = datetime.utcnow() + timedelta(seconds=app_settings.JWT_EXP_SECONDS)
     return jwt.encode(
         {
             'uuid': uuid,

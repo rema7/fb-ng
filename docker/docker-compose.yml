@@ -4,6 +4,7 @@ services:
     container_name: fbng_db
     image: mysql:latest
     hostname: fbng_db
+    command: --lower_case_table_names=1
     environment:
       MYSQL_DATABASE: 'fbng_db'
       MYSQL_USER: 'db_user'
