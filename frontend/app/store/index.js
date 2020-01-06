@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 
 import account from 'store/modules/Account'
+import accounts from 'store/modules/Accounts'
 import auth from 'store/modules/Auth'
 
 import settings from 'store/modules/Settings'
@@ -26,6 +27,7 @@ const getters = {
 
 const modules = {
     account,
+    accounts,
     auth,
 
     settings,

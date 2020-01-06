@@ -83,7 +83,8 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex'
-const { mapActions } = createNamespacedHelpers('auth')
+const auth = createNamespacedHelpers('auth')
+const account = createNamespacedHelpers('account')
 
 export default {
     name: 'RegisterView',
@@ -105,11 +106,15 @@ export default {
             (v) => !!v || 'Required',
         ],
     }),
+    computed: {
+        ...auth.mapGetters(['error']),
+    },
     methods: {
-        ...mapActions(['register']),
-        onRegister () {
+        ...auth.mapActions(['register']),
+        ...account.mapActions(['fetch']),
+        async onRegister () {
             const { valid, email, password, name, lastName, selectedSex, age, country } = this
-            valid && this.register({
+            valid && await this.register({
                 email,
                 password,
                 name,
@@ -118,6 +123,10 @@ export default {
                 age: +age,
                 country,
             })
+            if (!this.error) {
+                await this.fetch()
+                await this.$router.push(this.$route.query.redirect || '/')
+            }
         },
     },
 }

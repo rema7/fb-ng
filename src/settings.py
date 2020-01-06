@@ -22,12 +22,14 @@ DB_CONNECTION_YOYO = f'mysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}'
 
 # Frontend
 FURL_ACCOUNT = '/api/account'
+FURL_ACCOUNTS = '/api/accounts'
 FURL_REGISTER = '/api/register'
 FURL_LOGIN = '/api/auth/login'
 FURL_SETTINGS = '/api/settings'
 
 # Backend
 ACCOUNT_ROUTE = '/account'
+ACCOUNTS_ROUTE = '/accounts'
 REGISTER_ROUTE = '/register'
 LOGIN_ROUTE = '/auth/login'
 SETTINGS_ROUTE = '/settings'

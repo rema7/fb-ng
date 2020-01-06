@@ -1,4 +1,4 @@
-import { ACCOUNT_ERROR, ACCOUNT_REQUEST, ACCOUNT_SUCCESS } from '../actions/Account'
+import { ACCOUNT_ERROR, ACCOUNT_REQUEST, ACCOUNT_SUCCESS } from 'store/actions/Account'
 import { getSecured } from 'helpers/requests'
 
 const state = {

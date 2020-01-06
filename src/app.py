@@ -3,6 +3,7 @@ from logging.config import dictConfig
 
 import falcon
 
+from api.accounts.resources import AccountsResource
 from api.resources import SettingsResource, AccountResource
 from api.auth.resources import LoginResource, RegisterResource
 from middlewares import SecureMiddleware, ContentEncodingMiddleware
@@ -17,6 +18,7 @@ app = falcon.API(middleware=[
 ])
 
 app.add_route(app_settings.ACCOUNT_ROUTE, AccountResource())
+app.add_route(app_settings.ACCOUNTS_ROUTE, AccountsResource())
 app.add_route(app_settings.REGISTER_ROUTE, RegisterResource())
 app.add_route(app_settings.LOGIN_ROUTE, LoginResource())
 app.add_route(app_settings.SETTINGS_ROUTE, SettingsResource())

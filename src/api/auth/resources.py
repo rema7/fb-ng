@@ -28,6 +28,7 @@ class LoginResource:
             raise falcon.HTTPNotFound(
                 description='Wrong email or password'
             )
+        cursor.close()
 
         uuid = account_db['uuid']
         password_hash = account_db['password']
@@ -74,6 +75,7 @@ class RegisterResource:
                 uuid, email, generate_password_hash(password),
                 name, last_name, age, sex, country
             ))
+        cursor.close()
         connection.commit()
         return {
             'token': generate_token(uuid, email)

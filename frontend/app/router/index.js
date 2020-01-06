@@ -5,6 +5,7 @@ import store from 'store'
 import RootPage from 'pages/RootPage'
 import LoginView from 'views/LoginView'
 import RegisterView from 'views/RegisterView'
+import FriendsView from 'views/FriendsView'
 
 
 Vue.use(VueRouter)
@@ -12,7 +13,14 @@ Vue.use(VueRouter)
 const routes = [
     {
         path: '',
+        redirect: 'friends',
         component: RootPage,
+        children: [
+            {
+                path: 'friends',
+                component: FriendsView,
+            },
+        ],
         meta: {
             requiresAuth: true,
         },
@@ -25,7 +33,7 @@ const routes = [
         path: '/register',
         component: RegisterView,
     },
-    { path: '*', redirect: '/' },
+    { path: '*', redirect: '/friends' },
 ]
 
 

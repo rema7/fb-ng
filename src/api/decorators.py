@@ -2,7 +2,6 @@ import falcon
 import jsonschema
 import jwt
 
-from db.decorators import with_db_session
 import settings as app_settings
 
 
@@ -27,8 +26,7 @@ def validate_request(schema):
     return decor
 
 
-@with_db_session
-def validate_auth(req, resp, resource, params, connection=None):
+def validate_auth(req, resp, resource, params):
     encoded_jwt = req.context.get('Token', None)
     if not encoded_jwt:
         raise falcon.HTTPUnauthorized(

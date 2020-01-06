@@ -50,7 +50,8 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex'
-const { mapActions } = createNamespacedHelpers('auth')
+const auth = createNamespacedHelpers('auth')
+const account = createNamespacedHelpers('account')
 
 export default {
     name: 'LoginView',
@@ -66,14 +67,22 @@ export default {
             (v) => !!v || 'Password is required',
         ],
     }),
+    computed: {
+        ...auth.mapGetters(['error']),
+    },
     methods: {
-        ...mapActions(['login']),
-        onLogin () {
+        ...auth.mapActions(['login']),
+        ...account.mapActions(['fetch']),
+        async onLogin () {
             const { valid, email, password } = this
-            valid && this.login({
+            valid && await this.login({
                 email,
                 password,
             })
+            if (!this.error) {
+                await this.fetch()
+                await this.$router.push(this.$route.query.redirect || '/')
+            }
         },
     },
 }

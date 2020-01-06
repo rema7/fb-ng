@@ -21,5 +21,3 @@ def open_db_session():
         connection.rollback()
         raise
 
-    connection.close()
-
