@@ -4,13 +4,15 @@
             <div class="title font-weight-light">
                 <b>{{ friend.name }} {{ friend.lastName }}</b>
             </div>
-            <v-spacer/>
         </v-card-title>
+        <v-card-subtitle>
+        </v-card-subtitle>
         <v-card-text style="min-height: 80px;">
+            <v-flex>Email: {{ friend.email }}</v-flex>
+            <v-flex>Age: {{ friend.age }} Sex: {{ friend.sex }}</v-flex>
+            <v-flex>Country: {{ friend.country }}</v-flex>
+            <v-flex>Hobbies: {{ friend.hobbies }}</v-flex>
         </v-card-text>
-        <v-divider/>
-        <v-card-actions>
-        </v-card-actions>
     </v-card>
 </template>
 

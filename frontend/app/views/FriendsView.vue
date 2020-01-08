@@ -3,15 +3,22 @@
         <template #title>
             Friends
         </template>
-        <v-container fluid fill-height>
+        <v-container
+            fluid
+            grid-list-md
+            pa-2
+            ma-0
+            row
+            fill-height
+        >
             <v-layout
                 wrap
             >
                 <v-flex
                     v-for="account in accounts"
                     :key="account.uuid"
-                    outlined
-                    xs6 sm3 md3 lg3 xl3
+                    tile
+                    xs6 sm4 md4 lg3 xl3
                 >
                     <friend-card
                         :friend="account"

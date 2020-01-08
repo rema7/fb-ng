@@ -16,6 +16,13 @@ class AccountsResource:
             result = []
             for account_db in cursor.fetchall():
                 del account_db['password']
+                sql = "select h.name from hobby as h " \
+                      "join account_hobby ah on h.id = ah.hobby_id " \
+                      "join account a on ah.account_id = a.uuid where a.uuid = %s"
+                cursor.execute(sql, account_db['uuid'])
+                account_db.update({
+                    'hobbies': [hobby['name'] for hobby in cursor.fetchall()]
+                })
                 result.append(account_db)
             cursor.close()
             return result

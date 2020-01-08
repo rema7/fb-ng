@@ -1,8 +1,11 @@
+from datetime import datetime
+
 import falcon
 import jsonschema
 import jwt
 
 import settings as app_settings
+from db.decorators import with_db_session
 
 
 def validate_schema(json, schema, raise_exception=True):
@@ -26,7 +29,8 @@ def validate_request(schema):
     return decor
 
 
-def validate_auth(req, resp, resource, params):
+@with_db_session
+def validate_auth(req, resp, resource, params, connection):
     encoded_jwt = req.context.get('Token', None)
     if not encoded_jwt:
         raise falcon.HTTPUnauthorized(
@@ -38,4 +42,10 @@ def validate_auth(req, resp, resource, params):
         app_settings.JWT_SECRET,
         algorithm=app_settings.JWT_ALGORITHM
     )
+    expire_at = decoded_token['expire_at']
+    if datetime.utcnow() >= datetime.fromisoformat(expire_at):
+        raise falcon.HTTPUnauthorized(
+            description='Not authorized'
+        )
+
     req.context['account'] = decoded_token
