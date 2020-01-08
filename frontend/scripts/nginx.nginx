@@ -1,0 +1,11 @@
+server {
+    listen 9010 default_server;
+
+    server_name localhost;
+
+    location / {
+        root /frontend;
+        index index.html;
+        try_files $uri $uri/ /index.html?uri=$uri;
+    }
+}

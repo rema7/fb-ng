@@ -58,5 +58,5 @@ networks:
     name: fbng-net
     driver: bridge
   fbng-db-net:
-    name: vrwyas-db-net
+    name: fbng-db-net
     driver: bridge

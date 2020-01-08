@@ -5,8 +5,6 @@ const StyleLintPlugin = require('stylelint-webpack-plugin')
 const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
-const WebpackVersionFilePlugin = require('webpack-version-file-plugin')
-const execa = require('execa')
 
 require('babel-polyfill')
 
@@ -19,7 +17,7 @@ const publicRoot = path.join(repoRoot, 'public')
 module.exports = (env, argv) => {
     const mode = argv ? argv.mode : 'development'
 
-    let isProd = () => {
+    const isProd = () => {
         return mode !== 'development'
     }
 
@@ -44,22 +42,8 @@ module.exports = (env, argv) => {
     ]
 
     if (isProd()) {
-        const gitHash = execa.sync('git', ['rev-parse', '--short', 'HEAD']).stdout
-        const gitNumCommits = Number(execa.sync('git', ['rev-list', 'HEAD', '--count']).stdout)
-        const gitDirty = execa.sync('git', ['status', '-s', '-uall']).stdout.length > 0
         plugins = [
             ...plugins,
-            new WebpackVersionFilePlugin({
-                packageFile: path.join(__dirname, 'package.json'),
-                template: path.join(__dirname, 'version.ejs'),
-                outputFile: path.join('app/', 'version.json'),
-                extras: {
-                    githash: gitHash,
-                    gitNumCommits: gitNumCommits,
-                    timestamp: Date.now(),
-                    dirty: gitDirty,
-                },
-            }),
             new CopyWebpackPlugin([{
                 from: path.join(publicRoot, 'assets'),
                 to: 'public/assets',
