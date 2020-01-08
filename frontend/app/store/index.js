@@ -6,6 +6,7 @@ import account from 'store/modules/Account'
 import accounts from 'store/modules/Accounts'
 import auth from 'store/modules/Auth'
 
+import hobbies from 'store/modules/Hobbies'
 import settings from 'store/modules/Settings'
 
 
@@ -29,7 +30,7 @@ const modules = {
     account,
     accounts,
     auth,
-
+    hobbies,
     settings,
 }
 

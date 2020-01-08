@@ -27,8 +27,8 @@ steps = [
     step(
         """
         create table hobby(
-           id int not null auto_increment primary key unique,
-           name varchar(512) not null
+           id int not null auto_increment primary key,
+           name varchar(512) not null unique
         );
         """, "DROP TABLE hobby"
     ),

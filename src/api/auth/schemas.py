@@ -42,6 +42,12 @@ register_request_schema = {
         'country': {
             'type': 'string'
         },
+        'hobbies': {
+            'type': 'array',
+            'items': {
+                'type': 'string'
+            }
+        },
     },
     'required': [
         'email',

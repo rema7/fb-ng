@@ -11,6 +11,7 @@ const state = {
 
 const getters = {
     urls: (state) => state.urls,
+    isLoading: (state) => state.loading,
 }
 
 const actions = {

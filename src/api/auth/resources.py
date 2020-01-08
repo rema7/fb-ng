@@ -54,7 +54,8 @@ class RegisterResource:
     @staticmethod
     @with_db_session
     def handle_post(
-            email, password, name, last_name, age, sex, country, connection=None
+            email, password, name, last_name, age,
+            sex, country, hobbies, connection=None
     ):
         is_email_valid(email)
         with connection.cursor() as cursor:
@@ -75,6 +76,25 @@ class RegisterResource:
                 uuid, email, generate_password_hash(password),
                 name, last_name, age, sex, country
             ))
+            if hobbies is not None:
+                for hobby in hobbies:
+                    sql = 'select * from `hobby` where name = %s'
+                    cursor.execute(sql, hobby)
+                    hobby_db = cursor.fetchone()
+                    if hobby_db is None:
+                        sql = 'INSERT INTO `hobby` (`name`) value (%s)'
+                        cursor.execute(sql, hobby)
+                        hobby_id = cursor.lastrowid
+                    else:
+                        hobby_id = hobby_db['id']
+                    sql = "INSERT INTO `account_hobby`" \
+                          " (`account_id`, `hobby_id`)" \
+                          " VALUES (%s, %s)"
+                    cursor.execute(sql, (
+                        uuid,
+                        hobby_id
+                    ))
+
         cursor.close()
         connection.commit()
         return {
@@ -92,5 +112,6 @@ class RegisterResource:
             last_name=body['last_name'],
             age=body['age'],
             sex=body['sex'],
-            country=body['country']
+            country=body['country'],
+            hobbies=body.get('hobbies', None),
         )

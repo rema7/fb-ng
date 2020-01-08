@@ -57,6 +57,12 @@
                                 :rules="requiredRules"
                                 required
                             />
+                            <v-combobox
+                                v-model="selectedHobbies"
+                                :items="hobbies"
+                                label="Select a favorite hobby"
+                                multiple
+                            />
                         </v-form>
                     </v-card-text>
                     <v-card-actions
@@ -85,6 +91,7 @@
 import { createNamespacedHelpers } from 'vuex'
 const auth = createNamespacedHelpers('auth')
 const account = createNamespacedHelpers('account')
+const hobbies = createNamespacedHelpers('hobbies')
 
 export default {
     name: 'RegisterView',
@@ -105,15 +112,23 @@ export default {
         requiredRules: [
             (v) => !!v || 'Required',
         ],
+        selectedHobbies: [],
     }),
     computed: {
         ...auth.mapGetters(['error']),
+        ...hobbies.mapGetters(['hobbies']),
     },
     methods: {
         ...auth.mapActions(['register']),
         ...account.mapActions(['fetch']),
+        ...hobbies.mapActions({
+            fetchHobbies: 'fetch',
+        }),
         async onRegister () {
-            const { valid, email, password, name, lastName, selectedSex, age, country } = this
+            const {
+                valid, email, password, name, lastName,
+                selectedSex, age, country, selectedHobbies,
+            } = this
             valid && await this.register({
                 email,
                 password,
@@ -122,12 +137,16 @@ export default {
                 sex: selectedSex,
                 age: +age,
                 country,
+                hobbies: selectedHobbies,
             })
             if (!this.error) {
                 await this.fetch()
                 await this.$router.push(this.$route.query.redirect || '/')
             }
         },
+    },
+    mounted () {
+        this.fetchHobbies()
     },
 }
 </script>
