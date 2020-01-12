@@ -18,8 +18,5 @@ def open_connection():
 @contextmanager
 def open_db_session():
     connection = open_connection()
-    try:
-        yield connection
-    except:
-        connection.rollback()
+    yield connection
     connection.close()
