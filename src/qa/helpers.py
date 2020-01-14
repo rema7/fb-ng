@@ -15,54 +15,63 @@ hobbies = [
 ]
 
 
-def generate_hobby(connection=None):
-    for hobby in hobbies:
-        with connection.cursor() as cursor:
+def generate_accounts(cursor, number=5):
+    fake = Faker()
+    fake.add_provider(person)
+    fake.add_provider(address)
+
+    uuids = []
+    for i in range(number):
+        uuid = str(uuid4())
+        uuids.append(uuid)
+        sql = "INSERT INTO `account`" \
+              " (`uuid`, `email`, `password`, `name`, `last_name`, `age`, `sex`, `country`)" \
+              " VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        cursor.execute(sql, (
+            uuid,
+            f'user{i}@mail.ru',
+            generate_password_hash('123'),
+            fake.first_name(),
+            fake.last_name(),
+            randrange(18, 70),
+            sex[randrange(0, 2)],
+            fake.country()
+        ))
+
+    return uuids
+
+
+def get_hobby(hobby, cursor, connection):
+        sql = "select id from `hobby` as h where h.name = %s"
+        cursor.execute(sql, hobby)
+        hobby_db = cursor.fetchone()
+        if hobby_db is None:
             sql = "INSERT INTO `hobby`" \
                   " (`name`)" \
                   " VALUES (%s)"
             cursor.execute(sql, (
                 hobby,
             ))
-        cursor.close()
-        connection.commit()
-
-
-def generate_accounts(connection=None):
-    fake = Faker()
-    fake.add_provider(person)
-    fake.add_provider(address)
-
-    uuids = []
-    for i in range(50):
-        with connection.cursor() as cursor:
-            uuid = str(uuid4())
-            uuids.append(uuid)
-            sql = "INSERT INTO `account`" \
-                  " (`uuid`, `email`, `password`, `name`, `last_name`, `age`, `sex`, `country`)" \
-                  " VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-            cursor.execute(sql, (
-                uuid,
-                f'user{i}@mail.ru',
-                generate_password_hash('123'),
-                fake.first_name(),
-                fake.last_name(),
-                randrange(18, 70),
-                sex[randrange(0, 2)],
-                fake.country()
-            ))
-        cursor.close()
-        connection.commit()
-    return uuids
+            connection.commit()
+            return connection.insert_id()
+        return hobby_db['id']
 
 
 @with_db_session
-def qa_generate_data(connection=None):
-    generate_hobby(connection)
-    uuids = generate_accounts(connection)
-    for uuid in uuids:
-        with connection.cursor() as cursor:
-            hobbies_ids = set([randrange(1, 10) for _ in range(3)])
+def qa_generate_data(number=5, connection=None):
+    with connection.cursor() as cursor:
+        print('Creating accounts...', flush=True)
+        uuids = generate_accounts(cursor, number)
+        print('Accounts created', flush=True)
+        print('Filling hobbies...', flush=True)
+        for uuid in uuids:
+            hobbies_ids = set(
+                [
+                    get_hobby(hobbies[randrange(0, 10)], cursor, connection) for _ in range(3)
+                ]
+            )
+            print(hobbies_ids, flush=True)
+
             for hobby_id in hobbies_ids:
                 sql = "INSERT INTO `account_hobby`" \
                       " (`account_id`, `hobby_id`)" \
@@ -71,8 +80,6 @@ def qa_generate_data(connection=None):
                     uuid,
                     hobby_id
                 ))
-        cursor.close()
-        connection.commit()
-
-
-
+    print('Hobbies filled', flush=True)
+    cursor.close()
+    connection.commit()

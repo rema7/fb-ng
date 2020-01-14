@@ -5,13 +5,13 @@ from qa.helpers import qa_generate_data
 
 
 @task
-def generate_data(ctx):
+def generate_data(ctx, number=5):
     """
     Fill data in DataBase
     """
     print('Start filling...')
 
-    qa_generate_data()
+    qa_generate_data(number)
 
     print('Success')
 
