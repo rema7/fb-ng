@@ -59,25 +59,30 @@ def get_hobby(hobby, cursor, connection):
 
 @with_db_session
 def qa_generate_data(number=5, connection=None):
-    with connection.cursor() as cursor:
-        print('Creating accounts...', flush=True)
-        uuids = generate_accounts(cursor, number)
-        print('Accounts created', flush=True)
-        print('Filling hobbies...', flush=True)
-        for uuid in uuids:
-            hobbies_ids = set(
-                [
-                    get_hobby(hobbies[randrange(0, 10)], cursor, connection) for _ in range(3)
-                ]
-            )
-            for hobby_id in hobbies_ids:
-                sql = "INSERT INTO `account_hobby`" \
-                      " (`account_id`, `hobby_id`)" \
-                      " VALUES (%s, %s)"
-                cursor.execute(sql, (
-                    uuid,
-                    hobby_id
-                ))
-    print('Hobbies filled', flush=True)
-    cursor.close()
-    connection.commit()
+    all = number
+    step = 100
+    while number > 0:
+        print(f'Left {number} accounts of {all}')
+        with connection.cursor() as cursor:
+            print('Creating accounts...', flush=True)
+            uuids = generate_accounts(cursor, step)
+            print('Accounts created', flush=True)
+            print('Filling hobbies...', flush=True)
+            for uuid in uuids:
+                hobbies_ids = set(
+                    [
+                        get_hobby(hobbies[randrange(0, 10)], cursor, connection) for _ in range(3)
+                    ]
+                )
+                for hobby_id in hobbies_ids:
+                    sql = "INSERT INTO `account_hobby`" \
+                          " (`account_id`, `hobby_id`)" \
+                          " VALUES (%s, %s)"
+                    cursor.execute(sql, (
+                        uuid,
+                        hobby_id
+                    ))
+            print('Hobbies filled', flush=True)
+            cursor.close()
+            connection.commit()
+            number -= step
