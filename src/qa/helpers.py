@@ -70,8 +70,6 @@ def qa_generate_data(number=5, connection=None):
                     get_hobby(hobbies[randrange(0, 10)], cursor, connection) for _ in range(3)
                 ]
             )
-            print(hobbies_ids, flush=True)
-
             for hobby_id in hobbies_ids:
                 sql = "INSERT INTO `account_hobby`" \
                       " (`account_id`, `hobby_id`)" \
