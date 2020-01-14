@@ -10,9 +10,10 @@ cmp = {
     'lt': '<',
     'lte': '<=',
     'gt': '>',
-    'get': '>=',
+    'gte': '>=',
     'eq': '=',
 }
+
 
 @falcon.before(validate_auth)
 class AccountsResource:
@@ -23,7 +24,7 @@ class AccountsResource:
             age, age_cmp, sex, country,
             connection=None
     ):
-        fields = (account_id, f'm{search}%', f'm{search}%')
+        fields = (account_id,)
         with connection.cursor() as cursor:
             sql = 'select' \
                   ' a.uuid, a.email, a.name, a.last_name, a.age, a.country, a.sex,' \
@@ -31,7 +32,11 @@ class AccountsResource:
                   ' from account as a' \
                   ' left join account_hobby ah on a.uuid = ah.account_id' \
                   ' left join hobby h on ah.hobby_id = h.id' \
-                  ' where a.uuid != %s and (lower(a.name) like %s and lower(a.last_name) like %s)'
+                  ' where a.uuid != %s'
+            if search is not None and len(search) > 0:
+                search = search.lower()
+                sql += f' and ((lower(a.name) like %s or lower(a.last_name) like %s))'
+                fields += (f'{search}%', f'{search}%')
             if age is not None:
                 sql += f' and age {cmp.get(age_cmp)} %s'
                 fields += (age,)
@@ -47,10 +52,10 @@ class AccountsResource:
             return result
 
     @use_args({
-        'search': fields.Str(required=False, missing=''),
+        'search': fields.Str(required=False, missing=None),
         'limit': fields.Str(required=False, missing=100),
         'age': fields.Int(required=False, missing=None),
-        'age_cmp': fields.Int(
+        'age_cmp': fields.Str(
             required=False, missing='eq',
             validate=lambda c: c in ['lt', 'lte', 'eq', 'gt', 'gte']
         ),

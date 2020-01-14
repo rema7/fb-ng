@@ -17,7 +17,7 @@ axios.interceptors.response.use((response) => {
 }, (error) => {
     if (error.response && error.response.status === 401) {
         removeToken()
-        store.dispatch('auth/logout')
+        router.push('/login')
     }
     throw error
 })

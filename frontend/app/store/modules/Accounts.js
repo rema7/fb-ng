@@ -19,9 +19,7 @@ const actions = {
         }
         commit(ACCOUNTS_REQUEST)
         try {
-            const result = await getSecured(rootState.settings.urls.accounts, {
-                query: params && params.query,
-            })
+            const result = await getSecured(rootState.settings.urls.accounts, params)
             commit(ACCOUNTS_SUCCESS, result)
         } catch (e) {
             commit(ACCOUNTS_ERROR)
