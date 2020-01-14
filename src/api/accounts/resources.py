@@ -1,37 +1,73 @@
 import falcon
+from webargs import fields
+from webargs.falconparser import use_args
 
 import settings as app_settings
 from api.decorators import validate_auth
 from db.decorators import with_db_session
 
+cmp = {
+    'lt': '<',
+    'lte': '<=',
+    'gt': '>',
+    'get': '>=',
+    'eq': '=',
+}
 
 @falcon.before(validate_auth)
 class AccountsResource:
     @staticmethod
     @with_db_session
-    def handle_get(account_id, connection=None):
+    def handle_get(
+            account_id, search, limit,
+            age, age_cmp, sex, country,
+            connection=None
+    ):
+        fields = (account_id, f'm{search}%', f'm{search}%')
         with connection.cursor() as cursor:
-            sql = "SELECT * FROM `account`"
-            cursor.execute(sql)
-            result = []
-            for account_db in cursor.fetchall():
-                del account_db['password']
-                sql = "select h.name from hobby as h " \
-                      "join account_hobby ah on h.id = ah.hobby_id " \
-                      "join account a on ah.account_id = a.uuid where a.uuid = %s"
-                cursor.execute(sql, account_db['uuid'])
-                account_db.update({
-                    'hobbies': [hobby['name'] for hobby in cursor.fetchall()]
-                })
-                result.append(account_db)
+            sql = 'select' \
+                  ' a.uuid, a.email, a.name, a.last_name, a.age, a.country, a.sex,' \
+                  ' GROUP_CONCAT(h.name) as hobby' \
+                  ' from account as a' \
+                  ' left join account_hobby ah on a.uuid = ah.account_id' \
+                  ' left join hobby h on ah.hobby_id = h.id' \
+                  ' where a.uuid != %s and (lower(a.name) like %s and lower(a.last_name) like %s)'
+            if age is not None:
+                sql += f' and age {cmp.get(age_cmp)} %s'
+                fields += (age,)
+            if sex is not None:
+                sql += f' and sex is %s'
+                fields += (sex,)
+            fields += (limit,)
+            sql += ' group by a.uuid limit %s'
+
+            cursor.execute(sql, fields)
+            result = cursor.fetchall()
             cursor.close()
             return result
 
-    def on_get(self, req, resp):
+    @use_args({
+        'search': fields.Str(required=False, missing=''),
+        'limit': fields.Str(required=False, missing=100),
+        'age': fields.Int(required=False, missing=None),
+        'age_cmp': fields.Int(
+            required=False, missing='eq',
+            validate=lambda c: c in ['lt', 'lte', 'eq', 'gt', 'gte']
+        ),
+        'sex': fields.Int(required=False, missing=None),
+        'country': fields.Int(required=False, missing=None)
+    })
+    def on_get(self, req, resp, args):
         account = req.context['account']
 
         resp.body = self.handle_get(
-            account_id=account['uuid']
+            account_id=account['uuid'],
+            search=args['search'],
+            limit=args['limit'],
+            age=args['age'],
+            age_cmp=args['age_cmp'],
+            sex=args['sex'],
+            country=args['country']
         )
 
 

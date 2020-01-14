@@ -9,6 +9,7 @@ const state = {
 
 const getters = {
     accounts: (state) => state.accounts,
+    isLoading: ({ loading }) => loading,
 }
 
 const actions = {
@@ -36,8 +37,8 @@ const mutations = {
     },
     [ACCOUNTS_SUCCESS]: (state, { data }) => {
         state.loading = false
-        state.accounts = data
         state.loaded = true
+        state.accounts = data
     },
     [ACCOUNTS_ERROR]: (state) => {
         state.loading = false
