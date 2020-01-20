@@ -12,10 +12,29 @@ services:
       MYSQL_ROOT_PASSWORD: 'db_pwd'
     volumes:
       - ./dbdata:/var/lib/mysql:cached
+      - ./db/master.conf:/etc/mysql/conf.d/mysql.conf.cnf
     ports:
       - "6100:3306"
     networks:
       - fbng-net
+      - fbng-db-net
+  fbng_slave_db:
+    container_name: fbng_slave_db
+    image: mysql:latest
+    hostname: fbng_slave_db
+    environment:
+      MYSQL_DATABASE: 'fbng_db'
+      MYSQL_USER: 'db_user'
+      MYSQL_PASSWORD: 'db_pwd'
+      MYSQL_ROOT_PASSWORD: 'db_pwd'
+    volumes:
+      - ./dbdata_slave:/var/lib/mysql:cached
+      - $PWD/db/slave.conf:/etc/mysql/conf.d/mysql.conf.cnf
+    ports:
+      - "6200:3306"
+#    depends_on:
+#      - fbng_db
+    networks:
       - fbng-db-net
   fbng_backend:
     container_name: fbng_backend

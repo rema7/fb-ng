@@ -18,3 +18,4 @@ frontend/dist
 celery/**/__pycache__/
 /src/test.log
 /src/output.json
+/docker/dbdata_slave/
