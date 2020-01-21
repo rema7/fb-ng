@@ -32,8 +32,6 @@ services:
       - $PWD/db/slave.conf:/etc/mysql/conf.d/mysql.conf.cnf
     ports:
       - "6200:3306"
-#    depends_on:
-#      - fbng_db
     networks:
       - fbng-db-net
   fbng_backend:
